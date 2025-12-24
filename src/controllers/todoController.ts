@@ -1,4 +1,7 @@
 import { Request, Response, NextFunction } from "express";
+import { validationResult } from "express-validator";
+
+import HttpError from "../models/HttpError";
 
 type Todo = {
     id: string;
@@ -28,11 +31,21 @@ export const getTodo = (req: Request, res: Response, next: NextFunction) => {
 
     const todo = todos.find((t) => t.id === todoId);
 
+    if (!todo) {
+        return next(new HttpError("Could not find the todo", 404));
+    }
+
     return res.status(200).json(todo);
 };
 
 export const postTodo = (req: Request, res: Response, next: NextFunction) => {
     const title = req.body.title;
+
+    const err = validationResult(req);
+
+    if (!err.isEmpty()) {
+        return next(new HttpError("Invalid input", 402));
+    }
 
     todos.push({ id: Math.random().toString(), title, isDone: false });
 
@@ -43,7 +56,18 @@ export const putTodo = (req: Request, res: Response, next: NextFunction) => {
     const todoId = req.params.todoId;
     const todo: Todo = req.body;
 
+    const err = validationResult(req);
+
+    if (!err.isEmpty()) {
+        return next(new HttpError("Invalid input", 402));
+    }
+
     const updatedTodoIndex = todos.findIndex((t) => t.id === todoId);
+
+    if (!updatedTodoIndex) {
+        return next(new HttpError("Could not find the todo", 404));
+    }
+
     const updatedTodo = todos[updatedTodoIndex];
     todos[updatedTodoIndex] = {
         id: updatedTodo!.id,

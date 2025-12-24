@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { check } from "express-validator";
 
 import {
     deleteTodo,
@@ -14,9 +15,9 @@ router.get("/", getTodos);
 
 router.get("/:todoId", getTodo);
 
-router.post("/", postTodo);
+router.post("/", [check("title").isLength({ min: 5, max: 50 })], postTodo);
 
-router.put("/:todoId", putTodo);
+router.put("/:todoId", [check("title").isLength({ min: 5, max: 50 })], putTodo);
 
 router.delete("/:todoId", deleteTodo);
 
