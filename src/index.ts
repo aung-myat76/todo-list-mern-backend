@@ -1,5 +1,6 @@
 import bodyParser from "body-parser";
 import express, { Request, Response, NextFunction } from "express";
+import cors from "cors";
 
 import todoRoute from "./routes/todoRoute";
 import HttpError from "./models/HttpError";
@@ -7,7 +8,17 @@ import HttpError from "./models/HttpError";
 const app = express();
 
 // using modules
+app.use(
+    cors({
+        origin: "http://localhost:5173",
+        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        allowedHeaders: ["Content-Type"]
+    })
+);
+// app.use(cors());
+
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // routes
 app.use("/api/todos", todoRoute);
