@@ -1,11 +1,14 @@
 import bodyParser from "body-parser";
 import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
+import mongoose from "mongoose";
 
 import todoRoute from "./routes/todoRoute";
 import HttpError from "./models/HttpError";
 
 const app = express();
+const MONGODB_URI =
+    "mongodb+srv://aung_myat:zz762389@nodejs.4lf0iqx.mongodb.net/todo-app?retryWrites=true&w=majority&appName=Nodejs";
 
 // using modules
 app.use(
@@ -38,6 +41,15 @@ app.use((err: unknown, req: Request, res: Response, next: NextFunction) => {
 });
 
 // server
-app.listen(5000, () => {
-    console.log("Server is running...");
-});
+
+mongoose
+    .connect(MONGODB_URI)
+    .then(() => {
+        console.log("DB is connected");
+        app.listen(5000, () => {
+            console.log("Server is running...");
+        });
+    })
+    .catch((err) => {
+        console.log(err);
+    });

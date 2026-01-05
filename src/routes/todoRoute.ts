@@ -12,7 +12,15 @@ const router = Router();
 
 router.get("/", getTodos);
 
-router.post("/", [check("title").isLength({ min: 5, max: 50 })], postTodo);
+router.post(
+    "/",
+    [
+        check("title")
+            .isLength({ min: 5, max: 50 })
+            .withMessage("Title must be at least 5 - 50 characters!")
+    ],
+    postTodo
+);
 
 router.put("/", putTodo);
 
